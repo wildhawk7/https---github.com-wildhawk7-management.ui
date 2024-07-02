@@ -1,0 +1,115 @@
+import React, { useState } from 'react';
+import { TextField, Button, Container, Typography, Paper, Box, MenuItem } from '@mui/material';
+import axios from 'axios';
+import './RegisterEmployee.css';
+
+const RegisterEmployee = () => {
+  const [employeeName, setEmployeeName] = useState('');
+  const [employeeDescription, setEmployeeDescription] = useState('');
+  const [employeeAge, setEmployeeAge] = useState('');
+  const [employeeGender, setEmployeeGender] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('Employee');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const employee = {
+      employeeName,
+      employeeDescription,
+      employeeAge: parseInt(employeeAge, 10),
+      employeeGender,
+      username,
+      password,
+      role,
+    };
+    try {
+      const response = await axios.post('https://localhost:7236/api/employees/register', employee);
+      setMessage(response.data.message);
+    } catch (error) {
+      console.error('There was an error registering the employee!', error);
+      setMessage('Registration failed. Please try again.');
+    }
+  };
+
+  return (
+    <Container maxWidth="sm">
+      <Paper elevation={3} style={{ padding: '20px' }}>
+        <Typography variant="h4" component="h1" gutterBottom align="center">
+          Register Employee
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Employee Name"
+            value={employeeName}
+            onChange={(e) => setEmployeeName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Employee Description"
+            value={employeeDescription}
+            onChange={(e) => setEmployeeDescription(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Employee Age"
+            value={employeeAge}
+            onChange={(e) => setEmployeeAge(e.target.value)}
+            type="number"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Employee Gender"
+            value={employeeGender}
+            onChange={(e) => setEmployeeGender(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            select
+            label="Role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            fullWidth
+            margin="normal"
+          >
+            <MenuItem value="Employee">Employee</MenuItem>
+            <MenuItem value="Employer">Employer</MenuItem>
+            <MenuItem value="Admin">Admin</MenuItem>
+          </TextField>
+          <Box mt={2}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Save
+            </Button>
+          </Box>
+          {message && (
+            <Typography color="error" variant="body2" align="center">
+              {message}
+            </Typography>
+          )}
+        </form>
+      </Paper>
+    </Container>
+  );
+};
+
+export default RegisterEmployee;
